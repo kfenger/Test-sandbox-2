@@ -1,0 +1,74 @@
+name: blue-team-with-malcolm
+
+hosts:
+  - name: malcolm-host
+    base_box:
+      image: ubuntu-noble-2024
+      mgmt_user: admin
+      mgmt_protocol: ssh
+    flavor: small
+
+  - name: attacker-vm
+    base_box:
+      image: debian-12-x86_64
+      mgmt_user: attacker
+      mgmt_protocol: ssh
+    flavor: small
+
+  - name: victim-vm
+    base_box:
+      image: debian-12-x86_64
+      mgmt_user: trainee
+      mgmt_protocol: ssh
+    flavor: small
+
+routers:
+  - name: lab-router
+    base_box:
+      image: debian-12-x86_64
+      mgmt_user: debian
+    flavor: small
+
+wan:
+  name: internet-connection
+  cidr: 100.100.100.0/24
+
+networks:
+  - name: mgmt-net
+    cidr: 10.50.10.0/24
+    accessible_by_user: true
+
+  - name: lab-net
+    cidr: 192.168.70.0/24
+    accessible_by_user: true
+
+net_mappings:
+  - host: malcolm-host
+    network: mgmt-net
+    ip: 10.50.10.10
+
+  - host: attacker-vm
+    network: lab-net
+    ip: 192.168.70.20
+
+  - host: victim-vm
+    network: lab-net
+    ip: 192.168.70.30
+
+router_mappings:
+  - router: lab-router
+    network: mgmt-net
+    ip: 10.50.10.1
+
+  - router: lab-router
+    network: lab-net
+    ip: 192.168.70.1
+
+groups:
+  - name: blue-team
+    nodes:
+      - malcolm-host
+      - victim-vm
+  - name: red-team
+    nodes:
+      - attacker-vm
