@@ -1,0 +1,22 @@
+title: blue-team-with-malcolm
+description: "Malcolm sandbox - lab-net mirrored to malcolm-host"
+topology: topology.yml
+variables: variables.yml
+
+lifecycle:
+  on_create:
+    - action: provision
+
+  on_start:
+    - action: run_on_host
+      host: malcolm-host
+      command: "/provisioning/malcolm/install-malcolm.sh"
+      wait_for: 120
+    - action: run_on_host
+      host: malcolm-host
+      command: "/provisioning/malcolm/start-malcolm.sh"
+      wait_for: 240
+    - action: run_on_host
+      host: attacker-vm
+      command: "/provisioning/attacker/run_attack.sh"
+      wait_for: 10

@@ -1,0 +1,19 @@
+#cloud-config
+users:
+  - name: router
+    gecos: Router Sensor
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh-authorized-keys:
+      - "{{ ssh_public_key }}"
+
+packages:
+  - tcpdump
+  - openssh-client
+
+runcmd:
+  - [ bash, -c, "mkdir -p /var/tmp/pcap_out /opt/capture && chmod 700 /var/tmp/pcap_out" ]
+  - [ bash, -c, "cat > /opt/capture/capture-and-upload.sh <<'EOF'\n$(sed 's/$/\\n/' provisioning/router/capture-and-upload.sh | sed \"s/'/\'\\\\\'/g\")\nEOF" ]
+  - [ bash, -c, "chmod +x /opt/capture/capture-and-upload.sh" ]
+  - [ bash, -c, "cat > /etc/systemd/system/capture-upload.service <<'SERVICE'\n[Unit]\nDescription=PCAP capture and upload service\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nType=simple\nRestart=always\nExecStart=/opt/capture/capture-and-upload.sh\nEnvironment=\"CAPTURE_IFACE=eth1\"\nEnvironment=\"MALCOLM_HOST=10.50.10.10\"\nEnvironment=\"MALCOLM_USER=admin\"\nEnvironment=\"SSH_KEY=/root/.ssh/id_rsa\"\n\n[Install]\nWantedBy=multi-user.target\nSERVICE" ]
+  - [ bash, -c, "systemctl daemon-reload; systemctl enable --now capture-upload.service" ]
