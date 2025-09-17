@@ -1,4 +1,4 @@
-title: blue-team-with-malcolm
+title: blue-team-with-malcolm-v2
 description: "Malcolm sandbox - lab-net mirrored to malcolm-host"
 topology: topology.yml
 variables: variables.yml
