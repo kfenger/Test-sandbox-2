@@ -1,4 +1,4 @@
-name: blue-team-with-malcolm
+name: blue-team-with-malcolm-v2
 
 hosts:
   - name: malcolm-host
