@@ -1,12 +1,26 @@
 name: blue-team-with-malcolm
 
 hosts:
-  - name: malcolm-01
+  - name: malcolm-host
     base_box:
       image: ubuntu-noble-x86_64
       mgmt_user: ubuntu
       mgmt_protocol: ssh
     flavor: large
+
+  - name: attacker-vm
+    base_box:
+      image: debian-12-x86_64
+      mgmt_user: debian
+      mgmt_protocol: ssh
+    flavor: small
+
+  - name: victim-vm
+    base_box:
+      image: debian-12-x86_64
+      mgmt_user: debian
+      mgmt_protocol: ssh
+    flavor: small
 
 routers:
   - name: uia-router
@@ -17,6 +31,8 @@ routers:
     flavor: small
 
 networks:
+  - name: vlan512
+    cidr: 10.225.211.0/24
   - name: attacker-network
     cidr: 10.10.0.0/24
   - name: big-broker
@@ -27,12 +43,19 @@ networks:
     cidr: 192.168.131.0/24
   - name: outside-network
     cidr: 10.1.0.0/24
-  - name: vlan512
-    cidr: 10.225.211.0/24   # der malcolm-01 ligger
 
 net_mappings:
-  - host: malcolm-01
+  - host: malcolm-host
     network: vlan512
+    ip: 10.225.211.179
+
+  - host: attacker-vm
+    network: attacker-network
+    ip: 10.10.0.2
+
+  - host: victim-vm
+    network: outside-network
+    ip: 10.1.0.2
 
 router_mappings:
   - router: uia-router
@@ -42,5 +65,6 @@ router_mappings:
       - internet-connection
       - man-network
       - outside-network
+      - vlan512
 
 groups: []
