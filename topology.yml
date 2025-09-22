@@ -22,9 +22,40 @@ hosts:
       mgmt_protocol: ssh
     flavor: small
 
+# Hvis du vil ha router som egen entitet (anbefalt)
+routers:
   - name: lab-router
     base_box:
       image: debian-12-x86_64
       mgmt_user: debian
       mgmt_protocol: ssh
     flavor: small
+
+# Nettverk definisjoner
+networks:
+  - name: mgmt-net
+    cidr: 10.0.0.0/24
+  - name: attacker-net
+    cidr: 10.1.0.0/24
+  - name: victim-net
+    cidr: 10.2.0.0/24
+
+# Hvilke hosts hører til hvilke nettverk
+net_mappings:
+  - host: malcolm-host
+    network: mgmt-net
+  - host: attacker-vm
+    network: attacker-net
+  - host: victim-vm
+    network: victim-net
+
+# Hvilke routere er koblet til hvilke nettverk
+router_mappings:
+  - router: lab-router
+    networks:
+      - mgmt-net
+      - attacker-net
+      - victim-net
+
+# Grupper (kan være tom liste hvis du ikke bruker grupper)
+groups: []
