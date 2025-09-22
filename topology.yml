@@ -59,12 +59,27 @@ net_mappings:
 
 router_mappings:
   - router: uia-router
-    networks:
-      - attacker-network
-      - big-broker
-      - internet-connection
-      - man-network
-      - outside-network
-      - vlan512
+    network: attacker-network
+    ip: 10.10.0.1
+
+  - router: uia-router
+    network: big-broker
+    ip: 172.18.1.1
+
+  - router: uia-router
+    network: internet-connection
+    ip: 100.100.100.106
+
+  - router: uia-router
+    network: man-network
+    ip: 192.168.131.100
+
+  - router: uia-router
+    network: outside-network
+    ip: 10.1.0.1
+
+  - router: uia-router
+    network: vlan512
+    ip: 10.225.211.1
 
 groups: []
