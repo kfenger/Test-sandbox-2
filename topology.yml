@@ -1,61 +1,46 @@
 name: blue-team-with-malcolm
 
 hosts:
-  - name: malcolm-host
+  - name: malcolm-01
     base_box:
-      image: ubuntu-noble-2024
+      image: ubuntu-noble-x86_64
       mgmt_user: ubuntu
       mgmt_protocol: ssh
-    flavor: small
+    flavor: large
 
-  - name: attacker-vm
-    base_box:
-      image: debian-12-x86_64
-      mgmt_user: debian
-      mgmt_protocol: ssh
-    flavor: small
-
-  - name: victim-vm
-    base_box:
-      image: debian-12-x86_64
-      mgmt_user: debian
-      mgmt_protocol: ssh
-    flavor: small
-
-# Hvis du vil ha router som egen entitet (anbefalt)
 routers:
-  - name: lab-router
+  - name: uia-router
     base_box:
       image: debian-12-x86_64
       mgmt_user: debian
       mgmt_protocol: ssh
     flavor: small
 
-# Nettverk definisjoner
 networks:
-  - name: mgmt-net
-    cidr: 10.0.0.0/24
-  - name: attacker-net
+  - name: attacker-network
+    cidr: 10.10.0.0/24
+  - name: big-broker
+    cidr: 172.18.1.0/24
+  - name: internet-connection
+    cidr: 100.100.100.0/24
+  - name: man-network
+    cidr: 192.168.131.0/24
+  - name: outside-network
     cidr: 10.1.0.0/24
-  - name: victim-net
-    cidr: 10.2.0.0/24
+  - name: vlan512
+    cidr: 10.225.211.0/24   # der malcolm-01 ligger
 
-# Hvilke hosts hører til hvilke nettverk
 net_mappings:
-  - host: malcolm-host
-    network: mgmt-net
-  - host: attacker-vm
-    network: attacker-net
-  - host: victim-vm
-    network: victim-net
+  - host: malcolm-01
+    network: vlan512
 
-# Hvilke routere er koblet til hvilke nettverk
 router_mappings:
-  - router: lab-router
+  - router: uia-router
     networks:
-      - mgmt-net
-      - attacker-net
-      - victim-net
+      - attacker-network
+      - big-broker
+      - internet-connection
+      - man-network
+      - outside-network
 
-# Grupper (kan være tom liste hvis du ikke bruker grupper)
 groups: []
