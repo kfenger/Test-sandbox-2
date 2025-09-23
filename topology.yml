@@ -28,3 +28,9 @@ hosts:
       mgmt_user: debian
       mgmt_protocol: ssh
     flavor: small
+
+routers: []
+networks: []
+net_mappings: []
+router_mappings: []
+groups: []
